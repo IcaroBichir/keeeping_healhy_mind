@@ -9,7 +9,8 @@ export ZSH="/Users/icaro/.oh-my-zsh"
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
-ZSH_THEME="af-magic"
+# ZSH_THEME="af-magic"
+ZSH_THEME="amuse"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -69,7 +70,7 @@ HYPHEN_INSENSITIVE="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git git-flow brew history node npm kubectl)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -109,10 +110,23 @@ alias gits='git status'
 alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'' | less'
 alias checkpull='git checkout master && git pull'
 alias checkpulldev='git checkout develop && git pull'
-alias clean_local_branches='git remote prune origin'
+alias git_prune_branches='git remote prune origin'
+alias git_cleanup_hard='git branch | grep -v "master" | xargs git branch -D'
+alias git_showtagbydate='git log --tags --simplify-by-decoration --pretty="format:%ai %d"'
 alias validate_new_line='test -z "$(for fname in `find . -type f`; do tail -c 1 "$fname" | grep "^$" >/dev/null || echo "$fname does not end in newline" | tee /dev/stderr ; done;)"'
 alias cat="/usr/local/bin/bat"
 alias bkp_brew="brew bundle dump"
+export TF_VAR_homedir="/Users/icaro"
+export TOP_DIR=$(git rev-parse --show-toplevel)
+
+# kubernetes
+alias kube_drain='kubectl drain --ignore-daemonsets --delete-local-data'
+alias kube_cordon='kubectl cordon'
+alias fluxlogs='kubectl logs -n flux -f -l app=flux --since 5m'
+alias kube_api_version='for kind in `kubectl api-resources | tail +2 | awk "{ print $1 }"`; do kubectl explain $kind; done | grep -e "KIND:" -e "VERSION:"'
+node_last_octets () {
+  kubectl --skip-headers get no | cut -f 5 -d- | sort -n
+}
 
 # docker
 alias docker_kill='docker kill $(docker ps -qa)'
@@ -126,6 +140,8 @@ alias tg_clean_cache='find . -name ".terragrunt-cache" -exec rm -r "{}" \;'
 
 # exports
 export EDITOR=/usr/bin/vim
+export GOPATH="/Users/icaro/go"
+export PATH="$PATH:/Users/icaro/Library/Python/2.7/bin:/usr/local/bin/:/Users/icaro/go/bin"
 
 #   ---------------------------
 #   SEARCHING
